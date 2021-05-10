@@ -36,7 +36,7 @@ extras_require = {
         "pproxy >= 2.7, < 2.8",
         "pytest >= 6.2.4, < 6.3",
         "pytest-asyncio >= 0.15.0, < 0.16",
-        "pytest-randomly >= 3.7, < 3.8",
+        "pytest-randomly >= 3.8, < 3.9",
         "tenacity >= 7, < 7.1",
     ],
     "dev": [
