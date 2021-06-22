@@ -257,3 +257,15 @@ cdef extern from "libpq-fe.h":
     ctypedef void (*PQnoticeReceiver)(void *arg, const PGresult *res)
     PQnoticeReceiver PQsetNoticeReceiver(
         PGconn *conn, PQnoticeReceiver prog, void *arg)
+
+    # 34.5 Pipeline Mode
+
+    ctypedef enum PGpipelineStatus:
+        PQ_PIPELINE_ON
+        PQ_PIPELINE_OFF
+        PQ_PIPELINE_ABORTED
+
+    PGpipelineStatus PQpipelineStatus(const PGconn *conn)
+    int PQenterPipelineMode(PGconn *conn)
+    int PQexitPipelineMode(PGconn *conn)
+    int PQpipelineSync(PGconn *conn)

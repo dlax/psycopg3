@@ -22,7 +22,7 @@ from .. import errors as e
 from . import _pq_ctypes as impl
 from .misc import PGnotify, ConninfoOption, PGresAttDesc
 from .misc import error_message, connection_summary
-from ._enums import Format, ExecStatus
+from ._enums import Format, ExecStatus, PipelineStatus
 
 if TYPE_CHECKING:
     from . import proto
@@ -610,6 +610,9 @@ class PGconn:
         if not rv:
             raise MemoryError("couldn't allocate empty PGresult")
         return PGresult(rv)
+
+    def pipeline_status(self) -> PipelineStatus:
+        return PipelineStatus(impl.PQpipelineStatus(self._pgconn_ptr))
 
     def _call_bytes(
         self, func: Callable[[impl.PGconn_struct], Optional[bytes]]

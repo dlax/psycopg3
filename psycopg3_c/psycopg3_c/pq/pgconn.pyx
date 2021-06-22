@@ -11,8 +11,10 @@ from cpython.memoryview cimport PyMemoryView_FromObject
 
 import ctypes
 import logging
+from contextlib import contextmanager
+from typing import Iterator
 
-from psycopg3.pq import Format as PqFormat
+from psycopg3.pq import Format as PqFormat, PipelineStatus
 from psycopg3.pq.misc import PGnotify, connection_summary
 from psycopg3_c.pq cimport PQBuffer
 
@@ -495,6 +497,37 @@ cdef class PGconn:
         if not rv:
             raise MemoryError("couldn't allocate empty PGresult")
         return PGresult._from_ptr(rv)
+
+    def pipeline_status(self) -> PipelineStatus:
+        """Return the current pipeline mode status."""
+        return PipelineStatus(libpq.PQpipelineStatus(self._pgconn_ptr))
+
+    @contextmanager
+    def pipeline_mode(self) -> Iterator[None]:
+        """Enter pipeline mode.
+
+        :raises ~e.OperationalError: in case of failure to enter or exit the
+            pipeline mode.
+        """
+        if libpq.PQenterPipelineMode(self._pgconn_ptr) != 1:
+            raise e.OperationalError("failed to enter pipeline mode")
+        try:
+            yield None
+        finally:
+            if libpq.PQexitPipelineMode(self._pgconn_ptr) != 1:
+                raise e.OperationalError(error_message(self))
+
+    def pipeline_sync(self) -> None:
+        """Mark a synchronization point in a pipeline.
+
+        :raises ~e.OperationalError: if the connection is not in pipeline mode
+            or if sync failed.
+        """
+        rv = libpq.PQpipelineSync(self._pgconn_ptr)
+        if rv == 0:
+            raise e.OperationalError("connection not in pipeline mode")
+        if rv != 1:
+            raise e.OperationalError("failed to sync pipeline")
 
 
 cdef int _ensure_pgconn(PGconn pgconn) except 0:

@@ -572,6 +572,24 @@ PQsetNoticeReceiver = pq.PQsetNoticeReceiver
 PQsetNoticeReceiver.argtypes = [PGconn_ptr, PQnoticeReceiver, c_void_p]
 PQsetNoticeReceiver.restype = PQnoticeReceiver
 
+# 34.5 Pipeline Mode
+
+PQpipelineStatus = pq.PQpipelineStatus
+PQpipelineStatus.argtypes = [PGconn_ptr]
+PQpipelineStatus.restype = c_int
+
+PQenterPipelineMode = pq.PQenterPipelineMode
+PQenterPipelineMode.argtypes = [PGconn_ptr]
+PQenterPipelineMode.restype = c_int
+
+PQexitPipelineMode = pq.PQexitPipelineMode
+PQexitPipelineMode.argtypes = [PGconn_ptr]
+PQexitPipelineMode.restype = c_int
+
+PQpipelineSync = pq.PQpipelineSync
+PQpipelineSync.argtypes = [PGconn_ptr]
+PQpipelineSync.restype = c_int
+
 
 def generate_stub() -> None:
     import re
