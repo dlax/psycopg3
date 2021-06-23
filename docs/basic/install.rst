@@ -79,6 +79,8 @@ In order to perform a local installation you need some prerequisites:
 - Python development headers (e.g. the python3-dev package).
 - PostgreSQL client development headers (e.g. the libpq-dev package).
 - The :program:`pg_config` program available in the :envvar:`PATH`.
+- The library search paths adjusted to include PostgreSQL library directory
+  (:envvar:`LD_LIBRARY_PATH` including `pg_config --libdir`)
 
 You **must be able** to troubleshoot an extension build, for instance you must
 be able to read your compiler's error message. If you are not, please don't
